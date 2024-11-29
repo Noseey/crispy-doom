@@ -546,6 +546,7 @@ boolean AM_Responder(event_t * ev)
     static int bigstate = 0;
     static int joywait = 0;
     extern boolean speedkeydown (void);
+    static boolean btnStateToggleFollow = false; // [crispy]
 
     // [crispy] toggleable pan/zoom speed
     if (speedkeydown())
@@ -630,12 +631,20 @@ boolean AM_Responder(event_t * ev)
             else
                 AM_restoreScaleAndLoc();
         }
-        else if (mousebmapfollow >= 0 && ev->data1 &(1 << mousebmapfollow))
+        else if (mousebmapfollow >= 0 && ev->data1 & (1 << mousebmapfollow))
         {
-            followplayer = !followplayer;
-            P_SetMessage(plr,
-                         followplayer ? AMSTR_FOLLOWON : AMSTR_FOLLOWOFF,
-                         true);
+            if(!btnStateToggleFollow)
+            {
+                btnStateToggleFollow = true;
+                followplayer = !followplayer;
+                P_SetMessage(plr,
+                            followplayer ? AMSTR_FOLLOWON : AMSTR_FOLLOWOFF,
+                            true);
+            }
+        }
+        else if (!(ev->data1 & (1 << mousebmapfollow)))
+        {
+            btnStateToggleFollow = false;
         }
         else if (!followplayer && (ev->data2 || ev->data3))
         {

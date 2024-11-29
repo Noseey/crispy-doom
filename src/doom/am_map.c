@@ -762,6 +762,7 @@ AM_Responder
     static char buffer[20];
     int key;
     extern boolean speedkeydown (void);
+    static boolean btnStateToggleFollow = false; // [crispy]
 
     // [crispy] toggleable pan/zoom speed
     if (speedkeydown())
@@ -844,11 +845,20 @@ AM_Responder
 	else
 	if (mousebmapfollow >= 0 && ev->data1 & (1 << mousebmapfollow))
 	{
-		followplayer = !followplayer;
-		if (followplayer)
-			plr->message = DEH_String(AMSTR_FOLLOWON);
-		else
-			plr->message = DEH_String(AMSTR_FOLLOWOFF);
+		if(!btnStateToggleFollow)
+		{
+			btnStateToggleFollow = true;
+			followplayer = !followplayer;
+			if (followplayer)
+				plr->message = DEH_String(AMSTR_FOLLOWON);
+			else
+				plr->message = DEH_String(AMSTR_FOLLOWOFF);           
+		}
+	}
+	else
+	if (!(ev->data1 & (1 << mousebmapfollow)))
+	{
+		btnStateToggleFollow = false;
 	}
 	else
 	if (!followplayer && (ev->data2 || ev->data3))
