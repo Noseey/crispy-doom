@@ -884,6 +884,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_secretmessage",   &crispy->secretmessage);
     M_BindIntVariable("crispy_smoothlight",     &crispy->smoothlight);
     M_BindIntVariable("crispy_soundmono",       &crispy->soundmono);
+    M_BindIntVariable("crispy_strobelights",    &crispy->strobelights);
 #ifdef CRISPY_TRUECOLOR
     M_BindIntVariable("crispy_truecolor",       &crispy->truecolor);
 #endif

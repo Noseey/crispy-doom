@@ -38,34 +38,25 @@ void T_LightFlash(thinker_t *thinker)
 {
     lightflash_t *flash = (lightflash_t *) thinker;
 
-    if (--flash->count) // [crispy] Wait time til P_Random() must not be changed
+    if (--flash->count) 
         return;
 
-    if (flash->minlight)
+    if (flash->toggle)
     {
-        flash->minlight = 0;
+        if(!crispy->strobelights)
+            flash->sector->lightlevel = flash->maxlight;
+        else
+            flash->sector->lightlevel = flash->minlight;
+
+        flash->toggle = 0;
         flash->count = (P_Random() & flash->mintime) + 1;
     }
     else
     {
-        flash->minlight = 1;
+        flash->sector->lightlevel = flash->maxlight;
+        flash->toggle = 1;
         flash->count = (P_Random() & flash->maxtime) + 1;
-    }
-
-    // if (--flash->count)
-    //     return;
-
-    // if (flash->sector->lightlevel == flash->maxlight)
-    // {
-    //     flash->sector->lightlevel = flash->minlight;
-    //     flash->count = (P_Random() & flash->mintime) + 1;
-    // }
-    // else
-    // {
-    //     flash->sector->lightlevel = flash->maxlight;
-    //     flash->count = (P_Random() & flash->maxtime) + 1;
-    // }
-    
+    } 
 
 }
 
@@ -88,13 +79,8 @@ void P_SpawnLightFlash(sector_t * sector)
     flash->thinker.function = T_LightFlash;
     flash->sector = sector;
     flash->maxlight = sector->lightlevel;
-
-    // flash->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
-
-    // [crispy] If option is here, option only applies after level startup.
-    flash->minlight = 1;
-    flash->sector->lightlevel = flash->maxlight;
-
+    flash->toggle = 1; // [crispy] Start toggling with Maxlight
+    flash->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
     flash->maxtime = 64;
     flash->mintime = 7;
     flash->count = (P_Random() & flash->maxtime) + 1;
@@ -117,21 +103,23 @@ void T_StrobeFlash(thinker_t *thinker)
 {
     strobe_t *flash = (strobe_t *) thinker;
 
-    flash->sector->lightlevel = flash->maxlight;
+    if (--flash->count)
+        return;
 
-    // if (--flash->count)
-    //     return;
+    if (!flash->toggle)
+    {
+        flash->sector->lightlevel = flash->maxlight;
+        flash->count = flash->brighttime;
+    }
+    else
+    {
+        if(!crispy->strobelights)
+            flash->sector->lightlevel = flash->maxlight;
+        else
+            flash->sector->lightlevel = flash->minlight;
 
-    // if (flash->sector->lightlevel == flash->minlight)
-    // {
-    //     flash->sector->lightlevel = flash->maxlight;
-    //     flash->count = flash->brighttime;
-    // }
-    // else
-    // {
-    //     flash->sector->lightlevel = flash->minlight;
-    //     flash->count = flash->darktime;
-    // }
+        flash->count = flash->darktime;
+    }
 
 }
 
@@ -153,6 +141,7 @@ void P_SpawnStrobeFlash(sector_t * sector, int fastOrSlow, int inSync)
     flash->brighttime = STROBEBRIGHT;
     flash->thinker.function = T_StrobeFlash;
     flash->maxlight = sector->lightlevel;
+    flash->toggle = 1; // [crispy] Start toggling with Maxlight
     flash->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
 
     if (flash->minlight == flash->maxlight)
@@ -265,27 +254,31 @@ void T_Glow(thinker_t *thinker)
 {
     glow_t *g = (glow_t *) thinker;
 
-    g->sector->lightlevel = g->maxlight;
+    switch (g->direction)
+    {
+        case -1:               // DOWN
+            g->tmplight -= GLOWSPEED;
+            if (g->tmplight <= g->minlight)
+            {
+                g->tmplight += GLOWSPEED;
+                g->direction = 1;
+            }
+            break;
+        case 1:                // UP
+            g->tmplight += GLOWSPEED;
+            if (g->tmplight >= g->maxlight)
+            {
+                g->tmplight -= GLOWSPEED;
+                g->direction = -1;
+            }
+            break;
+    }
 
-    // switch (g->direction)
-    // {
-    //     case -1:               // DOWN
-    //         g->sector->lightlevel -= GLOWSPEED;
-    //         if (g->sector->lightlevel <= g->minlight)
-    //         {
-    //             g->sector->lightlevel += GLOWSPEED;
-    //             g->direction = 1;
-    //         }
-    //         break;
-    //     case 1:                // UP
-    //         g->sector->lightlevel += GLOWSPEED;
-    //         if (g->sector->lightlevel >= g->maxlight)
-    //         {
-    //             g->sector->lightlevel -= GLOWSPEED;
-    //             g->direction = -1;
-    //         }
-    //         break;
-    // }
+    if(!crispy->strobelights)
+        g->sector->lightlevel = g->maxlight;
+    else
+        g->sector->lightlevel = g->tmplight;
+
 }
 
 void P_SpawnGlowingLight(sector_t * sector)
@@ -297,6 +290,7 @@ void P_SpawnGlowingLight(sector_t * sector)
     g->sector = sector;
     g->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
     g->maxlight = sector->lightlevel;
+    g->tmplight = g->maxlight; // [crispy] Start with Maxlight
     g->thinker.function = T_Glow;
     g->direction = -1;
 

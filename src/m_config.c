@@ -2583,6 +2583,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(crispy_soundmono),
 
     //!
+    // @game heretic
+    //
+    // Sector strobe lights.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_strobelights),
+
+    //!
     // @game doom
     //
     // Level Stats Format.

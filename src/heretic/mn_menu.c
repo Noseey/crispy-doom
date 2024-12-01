@@ -132,6 +132,7 @@ static boolean CrispyToggleWidescreen(int option);
 static boolean CrispySmoothing(int option);
 static boolean CrispyBrightmaps(int option);
 static boolean CrispySmoothLighting(int option);
+static boolean CrispyStrobeLights(int option);
 static boolean CrispySoundMono(int option);
 static boolean CrispySndChannels(int option);
 static boolean CrispyAutomapStats(int option);
@@ -400,6 +401,7 @@ static MenuItem_t Crispness2Items[] = {
     {ITT_LRFUNC2, "PLAYER VIEW/WEAPON BOBBING:", CrispyBobfactor, 0, MENU_NONE},
     {ITT_LRFUNC2, "WEAPON ATTACK ALIGNMENT:", CrispyCenterWeapon, 0, MENU_NONE},
     {ITT_LRFUNC2, "DEFAULT DIFFICULTY:", CrispyDefaultskill, 0, MENU_NONE},
+    {ITT_LRFUNC2, "SECTOR STROBE LIGHTS:", CrispyStrobeLights, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EFUNC, "PREV PAGE", CrispyPrevPage, 0, MENU_NONE},
 };
@@ -407,7 +409,7 @@ static MenuItem_t Crispness2Items[] = {
 static Menu_t Crispness2Menu = {
     68, 35,
     DrawCrispness,
-    13, Crispness2Items,
+    14, Crispness2Items,
     0,
     MENU_OPTIONS
 };
@@ -1726,6 +1728,12 @@ static void CrispySmoothLightingHook (void)
 static boolean CrispySmoothLighting(int option)
 {
     crispy->post_rendering_hook = CrispySmoothLightingHook;
+    return true;
+}
+
+static boolean CrispyStrobeLights(int option)
+{
+    crispy->strobelights = !crispy->strobelights;
     return true;
 }
 
@@ -3053,4 +3061,7 @@ static void DrawCrispness2(void)
 
     // Default difficulty
     DrawCrispnessMultiItem(crispy->defaultskill, 200, 135, multiitem_difficulties, false);
+
+    // Strobe Lights
+    DrawCrispnessItem(crispy->strobelights, 216, 145);
 }

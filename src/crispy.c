@@ -28,6 +28,7 @@ static crispy_t crispy_s = {
 	.hires = 1,
 	.smoothscaling = 1,
 	.soundfix = 1,
+	.strobelights = 1,
 #ifdef CRISPY_TRUECOLOR
 	.smoothlight = 1,
 	.truecolor = 1,

@@ -115,6 +115,7 @@ typedef struct
     int minlight;
     int maxtime;
     int mintime;
+    int toggle;
 } lightflash_t;
 
 typedef struct
@@ -126,6 +127,7 @@ typedef struct
     int maxlight;
     int darktime;
     int brighttime;
+    int toggle;
 } strobe_t;
 
 typedef struct
@@ -135,6 +137,7 @@ typedef struct
     int minlight;
     int maxlight;
     int direction;
+    int tmplight;
 } glow_t;
 
 #define GLOWSPEED		8
