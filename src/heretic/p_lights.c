@@ -38,19 +38,34 @@ void T_LightFlash(thinker_t *thinker)
 {
     lightflash_t *flash = (lightflash_t *) thinker;
 
-    if (--flash->count)
+    if (--flash->count) // [crispy] Wait time til P_Random() must not be changed
         return;
 
-    if (flash->sector->lightlevel == flash->maxlight)
+    if (flash->minlight)
     {
-        flash->sector->lightlevel = flash->minlight;
+        flash->minlight = 0;
         flash->count = (P_Random() & flash->mintime) + 1;
     }
     else
     {
-        flash->sector->lightlevel = flash->maxlight;
+        flash->minlight = 1;
         flash->count = (P_Random() & flash->maxtime) + 1;
     }
+
+    // if (--flash->count)
+    //     return;
+
+    // if (flash->sector->lightlevel == flash->maxlight)
+    // {
+    //     flash->sector->lightlevel = flash->minlight;
+    //     flash->count = (P_Random() & flash->mintime) + 1;
+    // }
+    // else
+    // {
+    //     flash->sector->lightlevel = flash->maxlight;
+    //     flash->count = (P_Random() & flash->maxtime) + 1;
+    // }
+    
 
 }
 
@@ -74,7 +89,12 @@ void P_SpawnLightFlash(sector_t * sector)
     flash->sector = sector;
     flash->maxlight = sector->lightlevel;
 
-    flash->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
+    // flash->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
+
+    // [crispy] If option is here, option only applies after level startup.
+    flash->minlight = 1;
+    flash->sector->lightlevel = flash->maxlight;
+
     flash->maxtime = 64;
     flash->mintime = 7;
     flash->count = (P_Random() & flash->maxtime) + 1;
@@ -97,19 +117,21 @@ void T_StrobeFlash(thinker_t *thinker)
 {
     strobe_t *flash = (strobe_t *) thinker;
 
-    if (--flash->count)
-        return;
+    flash->sector->lightlevel = flash->maxlight;
 
-    if (flash->sector->lightlevel == flash->minlight)
-    {
-        flash->sector->lightlevel = flash->maxlight;
-        flash->count = flash->brighttime;
-    }
-    else
-    {
-        flash->sector->lightlevel = flash->minlight;
-        flash->count = flash->darktime;
-    }
+    // if (--flash->count)
+    //     return;
+
+    // if (flash->sector->lightlevel == flash->minlight)
+    // {
+    //     flash->sector->lightlevel = flash->maxlight;
+    //     flash->count = flash->brighttime;
+    // }
+    // else
+    // {
+    //     flash->sector->lightlevel = flash->minlight;
+    //     flash->count = flash->darktime;
+    // }
 
 }
 
@@ -243,25 +265,27 @@ void T_Glow(thinker_t *thinker)
 {
     glow_t *g = (glow_t *) thinker;
 
-    switch (g->direction)
-    {
-        case -1:               // DOWN
-            g->sector->lightlevel -= GLOWSPEED;
-            if (g->sector->lightlevel <= g->minlight)
-            {
-                g->sector->lightlevel += GLOWSPEED;
-                g->direction = 1;
-            }
-            break;
-        case 1:                // UP
-            g->sector->lightlevel += GLOWSPEED;
-            if (g->sector->lightlevel >= g->maxlight)
-            {
-                g->sector->lightlevel -= GLOWSPEED;
-                g->direction = -1;
-            }
-            break;
-    }
+    g->sector->lightlevel = g->maxlight;
+
+    // switch (g->direction)
+    // {
+    //     case -1:               // DOWN
+    //         g->sector->lightlevel -= GLOWSPEED;
+    //         if (g->sector->lightlevel <= g->minlight)
+    //         {
+    //             g->sector->lightlevel += GLOWSPEED;
+    //             g->direction = 1;
+    //         }
+    //         break;
+    //     case 1:                // UP
+    //         g->sector->lightlevel += GLOWSPEED;
+    //         if (g->sector->lightlevel >= g->maxlight)
+    //         {
+    //             g->sector->lightlevel -= GLOWSPEED;
+    //             g->direction = -1;
+    //         }
+    //         break;
+    // }
 }
 
 void P_SpawnGlowingLight(sector_t * sector)
