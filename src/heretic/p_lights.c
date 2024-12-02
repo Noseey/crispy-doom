@@ -109,6 +109,7 @@ void T_StrobeFlash(thinker_t *thinker)
     if (!flash->toggle)
     {
         flash->sector->lightlevel = flash->maxlight;
+        flash->toggle = 1;
         flash->count = flash->brighttime;
     }
     else
@@ -118,6 +119,7 @@ void T_StrobeFlash(thinker_t *thinker)
         else
             flash->sector->lightlevel = flash->minlight;
 
+        flash->toggle = 0;
         flash->count = flash->darktime;
     }
 
