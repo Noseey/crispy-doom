@@ -267,7 +267,7 @@ static void R_RaiseVisplanes (visplane_t** vp)
 */
 
 visplane_t *R_FindPlane(fixed_t height, int picnum,
-                        int lightlevel, int special)
+                        int fixedlightlevel, int lightlevel, int special)
 {
     visplane_t *check;
 
@@ -297,6 +297,7 @@ visplane_t *R_FindPlane(fixed_t height, int picnum,
     lastvisplane++;
     check->height = height;
     check->picnum = picnum;
+    check->fixedlightlevel = fixedlightlevel;
     check->lightlevel = lightlevel;
     check->special = special;
     check->minx = SCREENWIDTH;
@@ -357,6 +358,7 @@ visplane_t *R_CheckPlane(visplane_t * pl, int start, int stop)
     R_RaiseVisplanes(&pl);
     lastvisplane->height = pl->height;
     lastvisplane->picnum = pl->picnum;
+    lastvisplane->fixedlightlevel = pl->fixedlightlevel;
     lastvisplane->lightlevel = pl->lightlevel;
     lastvisplane->special = pl->special;
     pl = lastvisplane++;
@@ -644,7 +646,12 @@ void R_DrawPlanes(void)
         }
         ds_brightmap = R_BrightmapForFlatNum(lumpnum-firstflat);
         planeheight = abs(pl->height - viewz);
-        light = (pl->lightlevel >> LIGHTSEGSHIFT) + (extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting
+
+        if(!crispy->strobelights && pl->fixedlightlevel > 0)
+            light = (pl->fixedlightlevel >> LIGHTSEGSHIFT) + (extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting
+        else
+            light = (pl->lightlevel >> LIGHTSEGSHIFT) + (extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting
+
         if (light >= LIGHTLEVELS)
             light = LIGHTLEVELS - 1;
         if (light < 0)
