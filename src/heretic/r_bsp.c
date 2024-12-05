@@ -310,13 +310,35 @@ void R_AddLine(seg_t * line)
         || backsector->interpfloorheight != frontsector->interpfloorheight)
         goto clippass;          // window
 
-// reject empty lines used for triggers and special events
+if(!crispy->strobelights && frontsector->fixedlightlevel)
+{
+    // reject empty lines used for triggers and special events
+    if (backsector->ceilingpic == frontsector->ceilingpic
+        && backsector->floorpic == frontsector->floorpic
+        && backsector->lightlevel == frontsector->lightlevel
+        && backsector->fixedlightlevel == frontsector->fixedlightlevel
+        && backsector->special == frontsector->special // [crispy] check for special as well
+        && curline->sidedef->midtexture == 0)
+        return;
+}
+else
+{
+    // reject empty lines used for triggers and special events
     if (backsector->ceilingpic == frontsector->ceilingpic
         && backsector->floorpic == frontsector->floorpic
         && backsector->lightlevel == frontsector->lightlevel
         && backsector->special == frontsector->special // [crispy] check for special as well
         && curline->sidedef->midtexture == 0)
-        return;
+        return;  
+}
+
+// // reject empty lines used for triggers and special events
+//     if (backsector->ceilingpic == frontsector->ceilingpic
+//         && backsector->floorpic == frontsector->floorpic
+//         && backsector->lightlevel == frontsector->lightlevel
+//         && backsector->special == frontsector->special // [crispy] check for special as well
+//         && curline->sidedef->midtexture == 0)
+//         return;
 
   clippass:
     R_ClipPassWallSegment(x1, x2 - 1);
@@ -470,7 +492,7 @@ void R_Subsector(int num)
                                  frontsector->sky & PL_SKYFLAT ? frontsector->sky :
                                  frontsector->floorpic,
                                  frontsector->fixedlightlevel,
-                                 frontsector->lightlevel,
+                                 (!crispy->strobelights && frontsector->fixedlightlevel) ? frontsector->fixedlightlevel : frontsector->lightlevel,
                                  frontsector->special);
     else
         floorplane = NULL;
@@ -482,7 +504,7 @@ void R_Subsector(int num)
                                    frontsector->sky & PL_SKYFLAT ? frontsector->sky :
                                    frontsector->ceilingpic,
                                    frontsector->fixedlightlevel,
-                                   frontsector->lightlevel, 0);
+                                   (!crispy->strobelights && frontsector->fixedlightlevel) ? frontsector->fixedlightlevel : frontsector->lightlevel, 0);
     else
         ceilingplane = NULL;
 

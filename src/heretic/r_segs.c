@@ -677,20 +677,63 @@ void R_StoreWallRange(int start, int stop)
             && backsector->ceilingpic == skyflatnum)
             worldtop = worldhigh;
 
-        if (worldlow != worldbottom
-            || backsector->floorpic != frontsector->floorpic
-            || backsector->lightlevel != frontsector->lightlevel
-            || backsector->special != frontsector->special) // [crispy] check for special as well
-            markfloor = true;
+        if(!crispy->strobelights && ( backsector->lightlevel || frontsector->lightlevel))
+        {
+            if (worldlow != worldbottom
+                || backsector->floorpic != frontsector->floorpic
+                || backsector->lightlevel != frontsector->lightlevel
+                || backsector->fixedlightlevel != frontsector->fixedlightlevel
+                || backsector->special != frontsector->special) // [crispy] check for special as well
+                markfloor = true;
+            else
+                markfloor = false;  // same plane on both sides
+        }
         else
-            markfloor = false;  // same plane on both sides
+        {
+            if (worldlow != worldbottom
+                || backsector->floorpic != frontsector->floorpic
+                || backsector->lightlevel != frontsector->lightlevel
+                || backsector->special != frontsector->special) // [crispy] check for special as well
+                markfloor = true;
+            else
+                markfloor = false;  // same plane on both sides
+        }
 
-        if (worldhigh != worldtop
-            || backsector->ceilingpic != frontsector->ceilingpic
-            || backsector->lightlevel != frontsector->lightlevel)
-            markceiling = true;
+        // if (worldlow != worldbottom
+        //     || backsector->floorpic != frontsector->floorpic
+        //     || backsector->lightlevel != frontsector->lightlevel
+        //     || backsector->special != frontsector->special) // [crispy] check for special as well
+        //     markfloor = true;
+        // else
+        //     markfloor = false;  // same plane on both sides
+
+        if(!crispy->strobelights && ( backsector->lightlevel || frontsector->lightlevel))
+        {
+            if (worldhigh != worldtop
+                || backsector->ceilingpic != frontsector->ceilingpic
+                || backsector->lightlevel != frontsector->lightlevel
+                || backsector->fixedlightlevel != frontsector->fixedlightlevel)
+                markceiling = true;
+            else
+                markceiling = false;        // same plane on both sides
+        }
         else
-            markceiling = false;        // same plane on both sides
+        {
+            if (worldhigh != worldtop
+                || backsector->ceilingpic != frontsector->ceilingpic
+                || backsector->lightlevel != frontsector->lightlevel)
+                markceiling = true;
+            else
+                markceiling = false;        // same plane on both sides
+        }
+
+
+        // if (worldhigh != worldtop
+        //     || backsector->ceilingpic != frontsector->ceilingpic
+        //     || backsector->lightlevel != frontsector->lightlevel)
+        //     markceiling = true;
+        // else
+        //     markceiling = false;        // same plane on both sides
 
         if (backsector->interpceilingheight <= frontsector->interpfloorheight
             || backsector->interpfloorheight >= frontsector->interpceilingheight)
