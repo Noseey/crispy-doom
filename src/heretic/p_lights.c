@@ -74,8 +74,10 @@ void P_SpawnLightFlash(sector_t * sector)
     flash->sector = sector;
     flash->maxlight = sector->lightlevel;
     
-    flash->sector->fixedlightlevel = sector->lightlevel;
     flash->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
+    flash->sector->fixedlightlevel = MAX(flash->maxlight, flash->minlight);
+    flash->sector->fixedlightlevel -= (flash->sector->fixedlightlevel
+            - MIN(flash->maxlight, flash->minlight)) >> 2; // [crispy] reduce aggressiveness
     flash->maxtime = 64;
     flash->mintime = 7;
     flash->count = (P_Random() & flash->maxtime) + 1;
@@ -132,8 +134,10 @@ void P_SpawnStrobeFlash(sector_t * sector, int fastOrSlow, int inSync)
     flash->brighttime = STROBEBRIGHT;
     flash->thinker.function = T_StrobeFlash;
     flash->maxlight = sector->lightlevel;
-    flash->sector->fixedlightlevel = sector->lightlevel;
     flash->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
+    flash->sector->fixedlightlevel = MAX(flash->maxlight, flash->minlight);
+    flash->sector->fixedlightlevel -= (flash->sector->fixedlightlevel 
+            - MIN(flash->maxlight, flash->minlight)) >> 2; // [crispy] reduce aggressiveness
 
     if (flash->minlight == flash->maxlight)
         flash->minlight = 0;
@@ -275,7 +279,9 @@ void P_SpawnGlowingLight(sector_t * sector)
     g->sector = sector;
     g->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
     g->maxlight = sector->lightlevel;
-    g->sector->fixedlightlevel = sector->lightlevel;
+    g->sector->fixedlightlevel = MAX(g->maxlight, g->minlight);
+    g->sector->fixedlightlevel -= (g->sector->fixedlightlevel
+            - MIN(g->maxlight, g->minlight)) >> 2; // [crispy] reduce aggressiveness
     g->thinker.function = T_Glow;
     g->direction = -1;
 

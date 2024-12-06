@@ -86,7 +86,7 @@ typedef struct
     fixed_t floorheight, ceilingheight;
     short floorpic, ceilingpic;
     short lightlevel;
-    short fixedlightlevel;      // [crispy] level when disabling strobe lights
+    short fixedlightlevel;      // [crispy] used when strobe lights disabled
     short special, tag;
 
     int soundtraversed;         // 0 = untraversed, 1,2 = sndlines -1
