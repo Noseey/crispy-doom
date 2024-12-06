@@ -401,7 +401,7 @@ static MenuItem_t Crispness2Items[] = {
     {ITT_LRFUNC2, "PLAYER VIEW/WEAPON BOBBING:", CrispyBobfactor, 0, MENU_NONE},
     {ITT_LRFUNC2, "WEAPON ATTACK ALIGNMENT:", CrispyCenterWeapon, 0, MENU_NONE},
     {ITT_LRFUNC2, "DEFAULT DIFFICULTY:", CrispyDefaultskill, 0, MENU_NONE},
-    {ITT_LRFUNC2, "SECTOR STROBE LIGHTS:", CrispyStrobeLights, 0, MENU_NONE},
+    {ITT_LRFUNC2, "DISABLE STROBE LIGHTS:", CrispyStrobeLights, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EFUNC, "PREV PAGE", CrispyPrevPage, 0, MENU_NONE},
 };
@@ -3063,5 +3063,5 @@ static void DrawCrispness2(void)
     DrawCrispnessMultiItem(crispy->defaultskill, 200, 135, multiitem_difficulties, false);
 
     // Strobe Lights
-    DrawCrispnessItem(crispy->strobelights, 216, 145);
+    DrawCrispnessItem(!crispy->strobelights, 222, 145);
 }
