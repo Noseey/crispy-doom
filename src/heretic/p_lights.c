@@ -73,8 +73,8 @@ void P_SpawnLightFlash(sector_t * sector)
     flash->thinker.function = T_LightFlash;
     flash->sector = sector;
     flash->maxlight = sector->lightlevel;
-    flash->sector->fixedlightlevel = sector->lightlevel;
     
+    flash->sector->fixedlightlevel = sector->lightlevel;
     flash->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
     flash->maxtime = 64;
     flash->mintime = 7;
@@ -264,7 +264,6 @@ void T_Glow(thinker_t *thinker)
             }
             break;
     }
-
 }
 
 void P_SpawnGlowingLight(sector_t * sector)
