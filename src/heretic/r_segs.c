@@ -187,11 +187,11 @@ void R_RenderMaskedSegRange(drawseg_t * ds, int x1, int x2)
     backsector = curline->backsector;
     texnum = texturetranslation[curline->sidedef->midtexture];
 
-    if(!crispy->strobelights && frontsector->fixedlightlevel > 0)
-        lightnum = (frontsector->fixedlightlevel >> LIGHTSEGSHIFT) + (extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting, no strobe lights
+    if(!crispy->strobelights && frontsector->fixedlightlevel)
+        lightnum = (frontsector->fixedlightlevel >> LIGHTSEGSHIFT) + (extralight * LIGHTBRIGHT); // [crispy] disable strobe lights
     else
         lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + (extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting
-
+    
     // [crispy] smoother fake contrast
     lightnum += curline->fakecontrast;
 /*
@@ -677,63 +677,22 @@ void R_StoreWallRange(int start, int stop)
             && backsector->ceilingpic == skyflatnum)
             worldtop = worldhigh;
 
-        if(!crispy->strobelights && ( backsector->lightlevel || frontsector->lightlevel))
-        {
-            if (worldlow != worldbottom
-                || backsector->floorpic != frontsector->floorpic
-                || backsector->lightlevel != frontsector->lightlevel
-                || backsector->fixedlightlevel != frontsector->fixedlightlevel
-                || backsector->special != frontsector->special) // [crispy] check for special as well
-                markfloor = true;
-            else
-                markfloor = false;  // same plane on both sides
-        }
+        if (worldlow != worldbottom
+            || backsector->floorpic != frontsector->floorpic
+            || backsector->lightlevel != frontsector->lightlevel
+            || backsector->fixedlightlevel != frontsector->fixedlightlevel // [crispy] check for fixedlight
+            || backsector->special != frontsector->special) // [crispy] check for special as well
+            markfloor = true;
         else
-        {
-            if (worldlow != worldbottom
-                || backsector->floorpic != frontsector->floorpic
-                || backsector->lightlevel != frontsector->lightlevel
-                || backsector->special != frontsector->special) // [crispy] check for special as well
-                markfloor = true;
-            else
-                markfloor = false;  // same plane on both sides
-        }
+            markfloor = false;  // same plane on both sides
 
-        // if (worldlow != worldbottom
-        //     || backsector->floorpic != frontsector->floorpic
-        //     || backsector->lightlevel != frontsector->lightlevel
-        //     || backsector->special != frontsector->special) // [crispy] check for special as well
-        //     markfloor = true;
-        // else
-        //     markfloor = false;  // same plane on both sides
-
-        if(!crispy->strobelights && ( backsector->lightlevel || frontsector->lightlevel))
-        {
-            if (worldhigh != worldtop
-                || backsector->ceilingpic != frontsector->ceilingpic
-                || backsector->lightlevel != frontsector->lightlevel
-                || backsector->fixedlightlevel != frontsector->fixedlightlevel)
-                markceiling = true;
-            else
-                markceiling = false;        // same plane on both sides
-        }
+        if (worldhigh != worldtop
+            || backsector->ceilingpic != frontsector->ceilingpic
+            || backsector->lightlevel != frontsector->lightlevel
+            || backsector->fixedlightlevel != frontsector->fixedlightlevel) // [crispy] check for fixedlight
+            markceiling = true;
         else
-        {
-            if (worldhigh != worldtop
-                || backsector->ceilingpic != frontsector->ceilingpic
-                || backsector->lightlevel != frontsector->lightlevel)
-                markceiling = true;
-            else
-                markceiling = false;        // same plane on both sides
-        }
-
-
-        // if (worldhigh != worldtop
-        //     || backsector->ceilingpic != frontsector->ceilingpic
-        //     || backsector->lightlevel != frontsector->lightlevel)
-        //     markceiling = true;
-        // else
-        //     markceiling = false;        // same plane on both sides
+            markceiling = false;        // same plane on both sides
 
         if (backsector->interpceilingheight <= frontsector->interpfloorheight
             || backsector->interpfloorheight >= frontsector->interpceilingheight)
@@ -794,8 +753,8 @@ void R_StoreWallRange(int start, int stop)
         // OPTIMIZE: get rid of LIGHTSEGSHIFT globally
         if (!fixedcolormap)
         {
-            if(!crispy->strobelights && frontsector->fixedlightlevel > 0)
-                lightnum = (frontsector->fixedlightlevel >> LIGHTSEGSHIFT) + (extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting
+            if(!crispy->strobelights && frontsector->fixedlightlevel)
+                lightnum = (frontsector->fixedlightlevel >> LIGHTSEGSHIFT) + (extralight * LIGHTBRIGHT); // [crispy] disable strobe lights
             else
                 lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + (extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting
             // [crispy] smoother fake contrast

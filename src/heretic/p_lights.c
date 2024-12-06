@@ -74,6 +74,7 @@ void P_SpawnLightFlash(sector_t * sector)
     flash->sector = sector;
     flash->maxlight = sector->lightlevel;
     flash->sector->fixedlightlevel = sector->lightlevel;
+    
     flash->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
     flash->maxtime = 64;
     flash->mintime = 7;

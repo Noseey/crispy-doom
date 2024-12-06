@@ -267,7 +267,7 @@ static void R_RaiseVisplanes (visplane_t** vp)
 */
 
 visplane_t *R_FindPlane(fixed_t height, int picnum,
-                        int fixedlightlevel, int lightlevel, int special)
+                        int lightlevel, int special)
 {
     visplane_t *check;
 

@@ -86,7 +86,7 @@ typedef struct
     fixed_t floorheight, ceilingheight;
     short floorpic, ceilingpic;
     short lightlevel;
-    short fixedlightlevel;      // [crispy] used to disable strobe
+    short fixedlightlevel;      // [crispy] level when disabling strobe lights
     short special, tag;
 
     int soundtraversed;         // 0 = untraversed, 1,2 = sndlines -1
@@ -204,7 +204,6 @@ typedef struct
 {
     fixed_t height;
     int picnum;
-    int fixedlightlevel;
     int lightlevel;
     int special;
     int minx, maxx;
@@ -475,7 +474,7 @@ void R_MapPlane(int y, int x1, int x2);
 void R_MakeSpans(int x, unsigned int t1, unsigned int b1, unsigned int t2, unsigned int b2); // [crispy] 32-bit integer math
 void R_DrawPlanes(void);
 
-visplane_t *R_FindPlane(fixed_t height, int picnum, int fixedlightlevel, int lightlevel,
+visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel,
                         int special);
 visplane_t *R_CheckPlane(visplane_t * pl, int start, int stop);
 

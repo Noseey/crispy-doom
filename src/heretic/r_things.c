@@ -694,8 +694,9 @@ void R_AddSprites(sector_t * sec)
         return;                 // already added
 
     sec->validcount = validcount;
-    if(!crispy->strobelights && sec->fixedlightlevel > 0)
-        lightnum = (sec->fixedlightlevel >> LIGHTSEGSHIFT) + (extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting
+    
+    if(!crispy->strobelights && sec->fixedlightlevel)
+        lightnum = (sec->fixedlightlevel >> LIGHTSEGSHIFT) + (extralight * LIGHTBRIGHT); // [crispy] disable strobe lights
     else
         lightnum = (sec->lightlevel >> LIGHTSEGSHIFT) + (extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting
     if (lightnum < 0)
@@ -904,18 +905,14 @@ void R_DrawPlayerSprites(void)
 //
 // get light level
 //
-    if(!crispy->strobelights && viewplayer->mo->subsector->sector->fixedlightlevel > 0)
-    {
+    if(!crispy->strobelights && viewplayer->mo->subsector->sector->fixedlightlevel)
         lightnum =
             (viewplayer->mo->subsector->sector->fixedlightlevel >> LIGHTSEGSHIFT) +
-            (extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting
-    }
+            (extralight * LIGHTBRIGHT); // [crispy] disable strobe lights
     else
-    {
         lightnum =
             (viewplayer->mo->subsector->sector->lightlevel >> LIGHTSEGSHIFT) +
             (extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting
-    }
     if (lightnum < 0)
         spritelights = scalelight[0];
     else if (lightnum >= LIGHTLEVELS)
