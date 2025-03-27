@@ -1854,6 +1854,8 @@ void AM_Drawer(void)
         AM_drawGrid(GRIDCOLORS);
     AM_drawWalls();
     AM_drawPlayers();
+    // [crispy] check for translucent HUD
+    SB_Translucent(TRANSLUCENT_HUD && (!automapactive || crispy->automapoverlay));
     DrawWorldTimer();
 
     if (cheating == 2)
@@ -1862,8 +1864,8 @@ void AM_Drawer(void)
 //  AM_drawCrosshair(XHAIRCOLORS);
 //  AM_drawMarks();
 //      if(gameskill == sk_baby) AM_drawkeys();
-
     MN_DrTextA(P_GetMapName(gamemap), 38, 144);
+    SB_Translucent(false);
     if (ShowKills && netgame && deathmatch)
     {
         AM_DrawDeathmatchStats();
