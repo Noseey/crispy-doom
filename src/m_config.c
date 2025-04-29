@@ -508,7 +508,7 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_mouselook),
 
     //!
-    // @game doom heretic hexen
+    // @game doom heretic hexen strife
     //
     // Quick 180° reverse.
     //
@@ -795,6 +795,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(aspect_ratio_correct),
+
+    //!
+    // If non-zero, the screen will have smooth scaling.
+    //
+
+    CONFIG_VARIABLE_INT(smooth_pixel_scaling),
 
     //!
     // If non-zero, forces integer scales for resolution-independent rendering.
@@ -2257,7 +2263,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_multi_msgplayer8),
 
     //!
-    // @game doom heretic hexen
+    // @game doom heretic hexen strife
     // Quick 180° reverse.
     //
 
@@ -3391,4 +3397,3 @@ char *M_GetAutoloadDir(const char *iwadname, boolean makedir)
 
     return result;
 }
-
