@@ -2181,9 +2181,14 @@ void AM_drawMarks(void)
 	    {
 		AM_rotatePoint(&pt);
 	    }
-	    fx = (CXMTOF(pt.x) >> crispy->hires) - 1;
-	    fy = (CYMTOF(pt.y) >> crispy->hires) - 2;
-	    fx_flip = (flipscreenwidth[CXMTOF(pt.x)] >> crispy->hires) - 1;
+	    // fx = (CXMTOF(pt.x) >> crispy->hires) - 1;
+	    // fy = (CYMTOF(pt.y) >> crispy->hires) - 2;
+	    // fx_flip = (flipscreenwidth[CXMTOF(pt.x)] >> crispy->hires) - 1;
+
+	    fx = ((f_x + ((((int64_t)((pt.x)-m_x) * (scale_mtof >> crispy->hires)) >> 16)>>16))) - 1;
+	    fy = ((f_y + ((f_h>> crispy->hires) - ((((int64_t)((pt.y)-m_y) * (scale_mtof >> crispy->hires)) >> 16)>>16)))) - 2;
+	    fx_flip = (flipscreenwidth[(f_x + ((((int64_t)((pt.x)-m_x) * (scale_mtof >> crispy->hires)) >> 16)>>16))]) - 1;
+
 	    if (fx >= f_x && fx <= (f_w >> crispy->hires) - w && fy >= f_y && fy <= (f_h >> crispy->hires) - h)
 		V_DrawPatch(fx_flip - WIDESCREENDELTA, fy, marknums[i]);
 	}
