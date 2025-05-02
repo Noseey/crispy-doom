@@ -2185,6 +2185,10 @@ void AM_drawMarks(void)
 	    // fy = (CYMTOF(pt.y) >> crispy->hires) - 2;
 	    // fx_flip = (flipscreenwidth[CXMTOF(pt.x)] >> crispy->hires) - 1;
 
+	    // fx = ((f_x + ((((int64_t)((pt.x)-m_x) * scale_mtof) >> 16)>>16)) >> crispy->hires) - 1;
+	    // fy = ((f_y + (f_h - ((((int64_t)((pt.y)-m_y) * scale_mtof) >> 16)>>16))) >> crispy->hires) - 2;
+	    // fx_flip = (flipscreenwidth[(f_x + ((((int64_t)((pt.x)-m_x) * scale_mtof) >> 16)>>16))] >> crispy->hires) - 1;
+
 	    fx = ((f_x + ((((int64_t)((pt.x)-m_x) * (scale_mtof >> crispy->hires)) >> 16)>>16))) - 1;
 	    fy = ((f_y + ((f_h>> crispy->hires) - ((((int64_t)((pt.y)-m_y) * (scale_mtof >> crispy->hires)) >> 16)>>16)))) - 2;
 	    fx_flip = (flipscreenwidth[(f_x + ((((int64_t)((pt.x)-m_x) * (scale_mtof >> crispy->hires)) >> 16)>>16))]) - 1;
