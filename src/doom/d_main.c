@@ -1999,7 +1999,8 @@ void D_DoomMain (void)
     // Disable automatic loading of Master Levels, No Rest for the Living and
     // Sigil.
     //
-    if (!M_ParmExists("-nosideload") && gamemode != shareware && !demolumpname[0])
+    if (!M_ParmExists("-nosideload") && gamemode != shareware &&
+        !demolumpname[0] && !M_CheckParmWithArgs("-record", 1))
     {
 	if (gamemode == retail &&
 	    gameversion == exe_ultimate &&
