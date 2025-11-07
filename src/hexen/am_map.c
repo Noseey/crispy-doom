@@ -1943,6 +1943,10 @@ void AM_Drawer(void)
     AM_drawCrosshair(XHAIRCOLORS, false);
 //      if(gameskill == sk_baby) AM_drawkeys();
 
+    if (crispy->screenshot == 2)
+    {
+        return;
+    }
     // [crispy] check for translucent HUD
     SB_Translucent(TRANSLUCENT_HUD && (!automapactive || crispy->automapoverlay));
     DrawWorldTimer();
