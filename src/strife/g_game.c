@@ -2293,6 +2293,10 @@ void G_DeferedInitNew(skill_t skill, int map)
         G_CheckDemoStatus();
         Z_Free(demoname);
         G_RecordDemo(orig_demoname);
+
+        // [crispy] update required for recording e. g. when gotonextlevel was used
+        gamemap = d_map;
+
         G_BeginRecording();
     }
 } 
