@@ -827,7 +827,8 @@ void R_InitTextures (void)
 	{
 	    int p;
 
-	    M_StringCopy(name, pnameslumps[i].name_p + j * 8, sizeof(name));
+	    strncpy(name, pnameslumps[i].name_p + j * 8, sizeof(name));
+	    name[8] = 0;
 	    p = W_CheckNumForName(name);
 	    if (!V_IsPatchLump(p))
 	        p = -1;
