@@ -999,35 +999,31 @@ void HU_Erase(void)
 
 }
 
-static void Crispy_Statsline_Ratio (char *str, int str_size, const char *prefix, int count, int total, int extra)
+static void Crispy_Statsline_Ratio (char *str, int str_size, const char *prefix, int count, int total)
 {
-	if (extra)
-	    M_snprintf(str, str_size, "%s%s%s%d/%d+%d ", cr_stat, prefix, crstr[CR_GRAY],
-	               count, total, extra);
-	else
-	    M_snprintf(str, str_size, "%s%s%s%d/%d ", cr_stat, prefix, crstr[CR_GRAY],
-	               count, total);
+	M_snprintf(str, str_size, "%s%s%s%d/%d ", cr_stat, prefix, crstr[CR_GRAY],
+	           count, total);
 }
 
-static void Crispy_Statsline_Remaining (char *str, int str_size, const char *prefix, int count, int total, int extra)
+static void Crispy_Statsline_Remaining (char *str, int str_size, const char *prefix, int count, int total)
 {
 	M_snprintf(str, str_size, "%s%s%s%d ", cr_stat, prefix, crstr[CR_GRAY],
 		   MAX(0, total - count));
 }
 
-static void Crispy_Statsline_Percent (char *str, int str_size, const char *prefix, int count, int total, int extra)
+static void Crispy_Statsline_Percent (char *str, int str_size, const char *prefix, int count, int total)
 {
 	M_snprintf(str, str_size, "%s%s%s%d%% ", cr_stat, prefix, crstr[CR_GRAY],
 		   count * 100 / (total ? total : 1));
 }
 
-static void Crispy_Statsline_Boolean (char *str, int str_size, const char *prefix, int count, int total, int extra)
+static void Crispy_Statsline_Boolean (char *str, int str_size, const char *prefix, int count, int total)
 {
 	M_snprintf(str, str_size, "%s%s%s%s ", cr_stat, prefix, crstr[CR_GRAY],
 		   count >= total ? "Yes" : "No");
 }
 
-typedef void (*crispy_statsline_func_t)(char *str, int str_size, const char *prefix, int count, int total, int extra);
+typedef void (*crispy_statsline_func_t)(char *str, int str_size, const char *prefix, int count, int total);
 
 static const crispy_statsline_func_t crispy_statslines[NUM_STATSFORMATS] =
 {
@@ -1043,6 +1039,10 @@ void HU_Ticker(void)
     int i, rc;
     char c;
     char str[32], *s;
+    // [crispy] stat totals among all players
+    int killsum = environmentkills;
+    int itemsum = 0;
+    int secretsum = 0;
 
     // tick down message counter if message is up
     if (message_counter && !--message_counter)
@@ -1151,6 +1151,16 @@ void HU_Ticker(void)
 	    w_title.y = HU_TITLEY;
     }
 
+    // [crispy] calculate kill count among all players
+    for (i = 0 ; i < MAXPLAYERS; i++)
+    {
+        if (!playeringame[i])
+            continue;
+        killsum += players[i].killcount;
+        itemsum += players[i].itemcount;
+        secretsum += players[i].secretcount;
+    }
+
     if (crispy->automapstats == WIDGETS_STBAR && (!automapactive || w_title.y != HU_TITLEY))
     {
 	crispy_statsline_func_t crispy_statsline = crispy_statslines[crispy->statsformat];
@@ -1159,18 +1169,18 @@ void HU_Ticker(void)
 
 	w_kills.y = HU_TITLEY;
 
-	crispy_statsline(str, sizeof(str), "K ", plr->killcount, totalkills, extrakills);
+	crispy_statsline(str, sizeof(str), "K ", killsum - maxkilldiscount, totalkills);
 	HUlib_clearTextLine(&w_kills);
 	s = str;
 	while (*s)
 	    HUlib_addCharToTextLine(&w_kills, *(s++));
 
-	crispy_statsline(str, sizeof(str), "I ", plr->itemcount, totalitems, 0);
+	crispy_statsline(str, sizeof(str), "I ", itemsum, totalitems);
 	s = str;
 	while (*s)
 	    HUlib_addCharToTextLine(&w_kills, *(s++));
 
-	crispy_statsline(str, sizeof(str), "S ", plr->secretcount, totalsecret, 0);
+	crispy_statsline(str, sizeof(str), "S ", secretsum, totalsecret);
 	s = str;
 	while (*s)
 	    HUlib_addCharToTextLine(&w_kills, *(s++));
@@ -1183,19 +1193,19 @@ void HU_Ticker(void)
 
 	w_kills.x = HU_TITLEX; // to handle switching from Status bar to Always and Automap kills line options
 
-	crispy_statsline(str, sizeof(str), kills, plr->killcount, totalkills, extrakills);
+	crispy_statsline(str, sizeof(str), kills, killsum - maxkilldiscount, totalkills);
 	HUlib_clearTextLine(&w_kills);
 	s = str;
 	while (*s)
 	    HUlib_addCharToTextLine(&w_kills, *(s++));
 
-	crispy_statsline(str, sizeof(str), "I\t", plr->itemcount, totalitems, 0);
+	crispy_statsline(str, sizeof(str), "I\t", itemsum, totalitems);
 	HUlib_clearTextLine(&w_items);
 	s = str;
 	while (*s)
 	    HUlib_addCharToTextLine(&w_items, *(s++));
 
-	crispy_statsline(str, sizeof(str), "S\t", plr->secretcount, totalsecret, 0);
+	crispy_statsline(str, sizeof(str), "S\t", secretsum, totalsecret);
 	HUlib_clearTextLine(&w_scrts);
 	s = str;
 	while (*s)
