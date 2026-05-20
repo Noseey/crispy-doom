@@ -2149,6 +2149,9 @@ void SV_LoadGame(int slot)
 
     AssertSegment(ASEG_END);
 
+    // [crispy] read more extended savegame data for game
+    SV_ReadExtendedSaveGameData(EXTSAVEG_GAME);
+
     // Save player structs
     for (i = 0; i < maxplayers; i++)
     {

@@ -66,6 +66,7 @@ typedef enum
 typedef enum
 {
     MENU_MAIN,
+    MENU_EPISODE, // [crispy] Hexen / Deathkings selection
     MENU_CLASS,
     MENU_SKILL,
     MENU_OPTIONS,
@@ -113,6 +114,7 @@ extern void I_ReInitGraphics(int reinit); // [crispy]
 extern void R_ExecuteSetViewSize(void); // [crispy]
 extern void AM_LevelInit(boolean reinit); // [crispy]
 extern void AM_initVariables(void); // [crispy]
+extern void S_InitScript(void); // [crispy]
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -123,6 +125,7 @@ static void SetMenu(MenuType_t menu);
 static void SCQuitGame(int option);
 static void SCClass(int option);
 static void SCSkill(int option);
+static void SCEpisode(int option);
 static void SCMouseSensi(int option);
 static void SCMouseSensiX2(int option);
 static void SCMouseSensiY(int option);
@@ -160,6 +163,7 @@ static void SCMessages(int option);
 static void SCEndGame(int option);
 static void SCInfo(int option);
 static void DrawMainMenu(void);
+static void DrawEpisodeMenu(void);
 static void DrawClassMenu(void);
 static void DrawSkillMenu(void);
 static void DrawOptionsMenu(void);
@@ -222,7 +226,7 @@ static char numeric_entry_str[NUMERIC_ENTRY_NUMDIGITS + 1];
 static int numeric_entry_index;
 
 static MenuItem_t MainItems[] = {
-    {ITT_SETMENU, "NEW GAME", SCNetCheck2, 1, MENU_CLASS},
+    {ITT_EFUNC, "NEW GAME", SCNetCheck2, 1, MENU_NONE},
     {ITT_SETMENU, "OPTIONS", NULL, 0, MENU_OPTIONS},
     {ITT_SETMENU, "GAME FILES", NULL, 0, MENU_FILES},
     {ITT_EFUNC, "INFO", SCInfo, 0, MENU_NONE},
@@ -235,6 +239,19 @@ static Menu_t MainMenu = {
     5, MainItems,
     0,
     MENU_NONE
+};
+
+static MenuItem_t EpisodeItems[] = {
+    {ITT_EFUNC, "HEXEN: BEYOND HERETIC", SCEpisode, 1, MENU_NONE},
+    {ITT_EFUNC, "DEATHKINGS OF THE DARK CITADEL", SCEpisode, 2, MENU_NONE}
+};
+
+static Menu_t EpisodeMenu = {
+    33, 66,
+    DrawEpisodeMenu,
+    2, EpisodeItems,
+    0,
+    MENU_MAIN
 };
 
 static MenuItem_t ClassItems[] = {
@@ -556,6 +573,7 @@ static const multiitem_t multiitem_sndchannels[3] =
 
 static Menu_t *Menus[] = {
     &MainMenu,
+    &EpisodeMenu,
     &ClassMenu,
     &SkillMenu,
     &OptionsMenu,
@@ -603,7 +621,8 @@ static int G_ReloadLevel(void)
         if (demorecording)
         {
         gamemap = startmap;
-        gameepisode = startepisode;
+        // [crispy] might not be startepisode, due to support for multiple episodes
+        // gameepisode = startepisode;
         }
         G_DeferedInitNew(gameskill, gameepisode, gamemap);
         result = true;
@@ -988,6 +1007,17 @@ static void DrawMainMenu(void)
 
 //==========================================================================
 //
+// [crispy] DrawEpisodeMenu
+//
+//==========================================================================
+
+static void DrawEpisodeMenu(void)
+{
+    MN_DrTextB("CHOOSE EPISODE:", 34, 24);
+}
+
+//==========================================================================
+//
 // DrawClassMenu
 //
 //==========================================================================
@@ -1337,6 +1367,11 @@ static boolean SCNetCheck(int option)
 static void SCNetCheck2(int option)
 {
     SCNetCheck(option);
+    // [crispy] go to episode selection if Deathkings is sideloaded
+    if (crispy->havedeathkings)
+        SetMenu(MENU_EPISODE);
+    else
+        SetMenu(MENU_CLASS);
     return;
 }
 
@@ -1528,6 +1563,29 @@ static void SCClass(int option)
             break;
     }
     SetMenu(MENU_SKILL);
+}
+
+//---------------------------------------------------------------------------
+//
+// [crispy] PROC SCEpisode
+//
+//---------------------------------------------------------------------------
+
+static void SCEpisode(int option)
+{
+    if (demoplayback)
+    {
+        // deactivate playback, return control to player
+        demoextend = false;
+    }
+
+    // Execude Episode Selection
+    gameepisode = option;
+
+    S_InitScript();
+    InitMapInfo();
+    
+    SetMenu(MENU_CLASS);
 }
 
 //---------------------------------------------------------------------------
