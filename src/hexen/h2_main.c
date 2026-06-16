@@ -1058,11 +1058,7 @@ void H2_GameLoop(void)
             oldgametic = gametic;
         }
 
-        // [crispy] skip frame if not supposed to be visible
-        if (screenvisible)
-            DrawAndBlit();
-        else
-            screenvisible = true;
+        DrawAndBlit();
 
         // [crispy] post-rendering function pointer to apply config changes
         // that affect rendering and that are better applied after the current

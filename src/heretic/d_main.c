@@ -440,11 +440,7 @@ void D_DoomLoop(void)
             S_UpdateSounds(players[consoleplayer].mo);
             oldgametic = gametic;
         }
-        // [crispy] skip frame if not supposed to be visible
-        if (screenvisible)
-            D_Display();
-        else
-            screenvisible = true;
+        D_Display();
 
         // [crispy] post-rendering function pointer to apply config changes
         // that affect rendering and that are better applied after the current

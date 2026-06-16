@@ -2290,7 +2290,6 @@ void G_InitNew(skill_t skill, int episode, int map)
     gamemap = map;
     gameskill = skill;
     BorderNeedRefresh = true;
-    screenvisible = false; // [crispy] skip first frame after init
 
     // Initialize the sky
     R_InitSky(map);

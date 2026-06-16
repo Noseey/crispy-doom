@@ -2297,7 +2297,6 @@ void G_InitNew(skill_t skill, int episode, int map)
     gamemap = map;
     gameskill = skill;
     BorderNeedRefresh = true;
-    screenvisible = false; // [crispy] skip first frame after init
 
     // [crispy] total time for all completed levels
     totalleveltimes = 0;
