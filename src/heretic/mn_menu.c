@@ -2488,7 +2488,7 @@ boolean MN_Responder(event_t * event)
         }
         else if (!netgame && key != 0 && key == key_menu_nextlevel)
         {
-	    if (gameaction == ga_nothing && G_GotoNextLevel())
+	    if (G_GotoNextLevel())
 		return true;
         }
 
