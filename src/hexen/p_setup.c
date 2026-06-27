@@ -996,6 +996,13 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
 
 //printf ("free memory: 0x%x\n", Z_FreeMemory());
 
+    // [crispy]
+    R_SetupFrame(&players[displayplayer]);
+    R_ClearClipSegs();
+    R_ClearDrawSegs();
+    R_ClearPlanes();
+    R_ClearSprites();
+
 }
 
 //==========================================================================
