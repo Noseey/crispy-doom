@@ -996,7 +996,8 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
 
 //printf ("free memory: 0x%x\n", Z_FreeMemory());
 
-    // [crispy]
+    // [crispy] prepare frame to avoid crashing throughout R_RenderPlayerView
+    // https://github.com/fabiangreffrath/crispy-doom/issues/1400
     R_SetupFrame(&players[displayplayer]);
     R_ClearClipSegs();
     R_ClearDrawSegs();
