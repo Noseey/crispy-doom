@@ -1923,17 +1923,7 @@ void G_StartNewGame(skill_t skill)
     {
         realMap = 1;
     }
-    // [crispy] if a new game is started during demo recording, start a new demo
-    if (demorecording)
-    {
-        G_CheckDemoStatus();
-        Z_Free(demoname);
-        G_RecordDemo(TempSkill, 1, TempEpisode, TempMap, orig_demoname);
-    }
-    else
-    {
-        G_InitNew(TempSkill, gameepisode, realMap);
-    }
+    G_InitNew(TempSkill, gameepisode, realMap);
 }
 
 //==========================================================================
@@ -2189,6 +2179,14 @@ void G_DeferredNewGame(skill_t skill)
 {
     TempSkill = skill;
     gameaction = ga_newgame;
+
+    // [crispy] if a new game is started during demo recording, start a new demo
+    if (demorecording)
+    {
+        G_CheckDemoStatus();
+        Z_Free(demoname);
+        G_RecordDemo(skill, 1, gameepisode, startmap, orig_demoname);
+    }
 }
 
 //==========================================================================
@@ -2219,22 +2217,20 @@ void G_DeferedInitNew(skill_t skill, int episode, int map)
     TempEpisode = episode;
     TempMap = map;
     gameaction = ga_initnew;
-}
 
-void G_DoInitNew(void)
-{
-    SV_InitBaseSlot();
     // [crispy] if a new game is started during demo recording, start a new demo
     if (demorecording)
     {
         G_CheckDemoStatus();
         Z_Free(demoname);
-        G_RecordDemo(TempSkill, 1, TempEpisode, TempMap, orig_demoname);
+        G_RecordDemo(skill, 1, episode, map, orig_demoname);
     }
-    else
-    {
-        G_InitNew(TempSkill, TempEpisode, TempMap);
-    }
+}
+
+void G_DoInitNew(void)
+{
+    SV_InitBaseSlot();
+    G_InitNew(TempSkill, TempEpisode, TempMap);
     gameaction = ga_nothing;
 }
 
