@@ -853,6 +853,10 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     }
     players[consoleplayer].viewz = 1;   // will be set by player think
 
+    // [crispy] move stopping of sounds and sequence before Z_FreeTags
+    S_StopAllSound();
+    SN_StopAllSequences();
+
     // Waiting-for-level-load song; not played if playing music from CD
     // (the seek time will be so long it will just make loading take
     // longer)
@@ -990,8 +994,6 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     // Check if the level is a lightning level
     P_InitLightning();
 
-    S_StopAllSound();
-    SN_StopAllSequences();
     S_StartSong(gamemap, true);
 
 //printf ("free memory: 0x%x\n", Z_FreeMemory());
