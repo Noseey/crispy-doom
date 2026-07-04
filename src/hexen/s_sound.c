@@ -184,14 +184,14 @@ void S_StartSong(int song, boolean loop)
         }
 
         lumpnum = W_GetNumForName(songLump);
-        Mus_SndPtr = W_CacheLumpNum(lumpnum, PU_STATIC);
+        Mus_SndPtr = W_CacheLumpNum(lumpnum, PU_MUSIC);
         length = W_LumpLength(lumpnum);
 
         RegisteredSong = I_RegisterSong(Mus_SndPtr, length);
         I_PlaySong(RegisteredSong, loop);
         Mus_Song = song;
 
-        W_ReleaseLumpNum(lumpnum);
+        //W_ReleaseLumpNum(lumpnum);
     }
 }
 
@@ -300,7 +300,7 @@ void S_StartSongName(const char *songLump, boolean loop)
 
         RegisteredSong = I_RegisterSong(Mus_SndPtr, length);
         I_PlaySong(RegisteredSong, loop);
-        W_ReleaseLumpNum(lumpnum);
+        //W_ReleaseLumpNum(lumpnum);
         Mus_Song = -1;
     }
 }
