@@ -61,7 +61,7 @@ static int cd_track_end_time = 0;
 
 //static int rs; //the current registered song.
 //int mus_song = -1;
-//int mus_lumpnum;
+static int mus_lumpnum; // [crispy]
 //void *mus_sndptr;
 //byte *soundCurve;
 
@@ -146,7 +146,7 @@ static boolean StartCDTrack(int track, boolean loop)
 void S_StartSong(int song, boolean loop)
 {
     char *songLump;
-    int lumpnum;
+    // int lumpnum;
     int length;
     int track;
 
@@ -175,7 +175,9 @@ void S_StartSong(int song, boolean loop)
         {
             I_StopSong();
             I_UnRegisterSong(RegisteredSong);
+            W_ReleaseLumpNum(mus_lumpnum);
             RegisteredSong = 0;
+            Mus_SndPtr = NULL;
         }
         songLump = P_GetMapSongLump(song);
         if (!songLump)
@@ -183,15 +185,15 @@ void S_StartSong(int song, boolean loop)
             return;
         }
 
-        lumpnum = W_GetNumForName(songLump);
-        Mus_SndPtr = W_CacheLumpNum(lumpnum, PU_MUSIC);
-        length = W_LumpLength(lumpnum);
+        mus_lumpnum = W_GetNumForName(songLump);
+        Mus_SndPtr = W_CacheLumpNum(mus_lumpnum, PU_STATIC);
+        length = W_LumpLength(mus_lumpnum);
 
         RegisteredSong = I_RegisterSong(Mus_SndPtr, length);
         I_PlaySong(RegisteredSong, loop);
         Mus_Song = song;
 
-        //W_ReleaseLumpNum(lumpnum);
+        // W_ReleaseLumpNum(lumpnum);
     }
 }
 
@@ -241,7 +243,7 @@ int S_GetCurrentCDTrack(void)
 
 void S_StartSongName(const char *songLump, boolean loop)
 {
-    int lumpnum;
+    // int lumpnum;
     int cdTrack;
     int length;
 
@@ -291,12 +293,14 @@ void S_StartSongName(const char *songLump, boolean loop)
         {
             I_StopSong();
             I_UnRegisterSong(RegisteredSong);
+            W_ReleaseLumpNum(mus_lumpnum);
             RegisteredSong = NULL;
+            Mus_SndPtr = NULL;
         }
 
-        lumpnum = W_GetNumForName(songLump);
-        Mus_SndPtr = W_CacheLumpNum(lumpnum, PU_MUSIC);
-        length = W_LumpLength(lumpnum);
+        mus_lumpnum = W_GetNumForName(songLump);
+        Mus_SndPtr = W_CacheLumpNum(mus_lumpnum, PU_STATIC);
+        length = W_LumpLength(mus_lumpnum);
 
         RegisteredSong = I_RegisterSong(Mus_SndPtr, length);
         I_PlaySong(RegisteredSong, loop);

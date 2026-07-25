@@ -46,7 +46,7 @@ static channel_t channel[MAX_CHANNELS];
 
 static void *rs;          // Handle for the registered song
 int mus_song = -1;
-int mus_lumpnum;
+static int mus_lumpnum;
 void *mus_sndptr;
 byte *soundCurve;
 
@@ -86,6 +86,10 @@ void S_StartSong(int song, boolean loop)
     {
         I_StopSong();
         I_UnRegisterSong(rs);
+        W_ReleaseLumpNum(mus_lumpnum);
+        rs = NULL;
+        mus_sndptr = NULL;
+
     }
 
     if (song < mus_e1m1 || song > NUMMUSIC)
@@ -101,7 +105,7 @@ void S_StartSong(int song, boolean loop)
     {
         mus_lumpnum = (W_GetNumForName(S_music[song][0].name));
     }
-    mus_sndptr = W_CacheLumpNum(mus_lumpnum, PU_MUSIC);
+    mus_sndptr = W_CacheLumpNum(mus_lumpnum, PU_STATIC);
     mus_len = W_LumpLength(mus_lumpnum);
     rs = I_RegisterSong(mus_sndptr, mus_len);
     I_PlaySong(rs, loop);       //'true' denotes endless looping.
