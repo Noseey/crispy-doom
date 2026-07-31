@@ -1598,6 +1598,8 @@ static void I_OPL_StopSong(void)
 
 static void I_OPL_UnRegisterSong(void *handle)
 {
+    OPL_Lock();
+
     if (!music_initialized)
     {
         return;
@@ -1607,6 +1609,8 @@ static void I_OPL_UnRegisterSong(void *handle)
     {
         MIDI_FreeFile(handle);
     }
+
+    OPL_Unlock();
 }
 
 static boolean ConvertMus(byte *musdata, int len, char *filename)
@@ -1645,6 +1649,8 @@ static void *I_OPL_RegisterSong(void *data, int len)
         return NULL;
     }
 
+    OPL_Lock();
+
     // MUS files begin with "MUS"
     // Reject anything which doesnt have this signature
 
@@ -1673,6 +1679,8 @@ static void *I_OPL_RegisterSong(void *data, int len)
 
     M_remove(filename);
     free(filename);
+
+   OPL_Unlock();
 
     return result;
 }
