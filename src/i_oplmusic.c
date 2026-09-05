@@ -1388,8 +1388,6 @@ static void TrackTimerCallback(void *arg)
     opl_track_data_t *track = arg;
     midi_event_t *event;
 
-    OPL_Lock();
-
     // Get the next event and process it.
 
     if (!MIDI_GetNextEvent(track->iter, &event))
@@ -1424,8 +1422,6 @@ static void TrackTimerCallback(void *arg)
     // Reschedule the callback for the next event in the track.
 
     ScheduleTrack(track);
-
-    OPL_Unlock();
 }
 
 static void ScheduleTrack(opl_track_data_t *track)
@@ -1598,8 +1594,6 @@ static void I_OPL_StopSong(void)
 
 static void I_OPL_UnRegisterSong(void *handle)
 {
-    OPL_Lock();
-
     if (!music_initialized)
     {
         return;
@@ -1609,8 +1603,6 @@ static void I_OPL_UnRegisterSong(void *handle)
     {
         MIDI_FreeFile(handle);
     }
-
-    OPL_Unlock();
 }
 
 static boolean ConvertMus(byte *musdata, int len, char *filename)
@@ -1649,8 +1641,6 @@ static void *I_OPL_RegisterSong(void *data, int len)
         return NULL;
     }
 
-    OPL_Lock();
-
     // MUS files begin with "MUS"
     // Reject anything which doesnt have this signature
 
@@ -1679,8 +1669,6 @@ static void *I_OPL_RegisterSong(void *data, int len)
 
     M_remove(filename);
     free(filename);
-
-   OPL_Unlock();
 
     return result;
 }
